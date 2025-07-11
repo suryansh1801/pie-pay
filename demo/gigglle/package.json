@@ -1,0 +1,24 @@
+{
+  "name": "gigglle",
+  "version": "1.0.0",
+  "description": "assignment-task",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/suryansh1801/giggle-assignment.git"
+  },
+  "author": "suryansh1801",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/suryansh1801/giggle-assignment/issues"
+  },
+  "homepage": "https://github.com/suryansh1801/giggle-assignment#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  }
+}
