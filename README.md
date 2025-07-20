@@ -66,4 +66,11 @@ To complete the setup and run the application, follow these steps carefully:
     ]'
     ```
     
-    1. GET : /highest-discount
+    2. GET : /highest-discount
+
+    ```jsx
+    curl --location 'http://localhost:3000/api/v1/highest-discount?amountToPay=50000&paymentInstrument=CREDIT&bankName=FLIPKARTAXISBANK'
+    ```
+
+
+
