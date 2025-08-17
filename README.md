@@ -80,24 +80,28 @@ To complete the setup and run the application, follow these steps carefully:
 
 I decided to go with Express because Express.js is a great choice because it's incredibly simple and flexible. It's a **minimal** framework, giving you only the essential tools to build a web application and then getting out of your way. Because it's **unopinionated**, it doesn't force you to organize your code in any specific way, giving you complete freedom. This makes it very easy to learn and perfect for building small applications, simple APIs, or quick prototypes where you want to get started immediately without a lot of setup.
 
-1. MongoDB 
+2. MongoDB 
 
-I chose MongoDB because it works perfectly with the JSON Horoscope data. As a NoSQL document database, MongoDB stores data in a format that's nearly identical to the JSON payload that I store for Horoscope data. This direct mapping simplifies our code, as i don't need to translate the data into the rigid tables required by a traditional SQL database. This flexibility is a major advantage, we can easily adapt and store them without performing complex database migrations.
+I chose MongoDB because it works perfectly with the JSON data from the Flipkart Offers API. As a NoSQL document database, MongoDB stores data in a format that's nearly identical to the JSON payload i receive. This direct mapping simplifies our code, as i don't need to translate the data into the rigid tables required by a traditional SQL database. This flexibility is a major advantage; if Flipkart ever adds new fields to their offers, we can easily adapt and store them without performing complex database migrations.
 
-1. Typescript 
+The schema design focuses on performance and data integrity. I **embedded** the `contributors` information (like banks and payment types) directly within each offer document because this data always belongs to a specific offer. This design is highly efficient, as it allows me to fetch all the information for an offer in a single, fast database query. To make our `GET /highest-discount` endpoint fast, i added **indexes** to the `banks` and `payment_instrument` fields. Finally, making the `adjustment_id` **unique** was a simple and powerful way to let the database automatically handle the requirement to reject duplicate offers.
 
-TypeScript was chosen for this horoscope API project to build a more robust, maintainable, and error-free backend. Its primary benefit, **static typing**, is crucial for managing the specific data structures involved.
+3. Typescript 
 
-For instance, by defining an `IUser` interface, we guarantee that every user object consistently has properties like `name: string`, `birthdate: Date`, and `zodiacSign: string`. This prevents common runtime errors that could occur if a property were misspelled or had the wrong data type, especially within the authentication middleware where `req.user` is used.
+I chose TypeScript over plain JavaScript primarily for **type safety**, which helps us catch common bugs before the code ever runs. By defining the expected structure of the data with interfaces like `IOffer`, TypeScript acts as a safety net. For example, it guarantees that the `amountToPay` parameter is always a number and that the `contributors` object contains the correct fields, like an array of `banks`. This process catches potential errors and typos during development, not when a user is interacting with the API, leading to a much more reliable and robust application.
 
-This use of types also makes the code **self-documenting** and easier to work with. Any developer can look at the `IUser` and immediately understand the exact shape of an offer object, which improves collaboration and long-term maintainability. 
+This use of types also makes the code **self-documenting** and easier to work with. Any developer can look at the `IOffer`interface and immediately understand the exact shape of an offer object, which improves collaboration and long-term maintainability. 
+
+## Short Note on handling 1000 GET read request per second
+
+1. To handle 1,000 requests per second, the first step is **horizontal scaling**. Since the endpoint is stateless, we can run multiple instances of our Node.js application across several CPU cores and servers using a process manager like PM2 or containers like Docker. A **load balancer** is then placed in front of these instances to intelligently distribute the incoming traffic. This approach bypasses the single-threaded limitation of Node.js and ensures no single server is overwhelmed, allowing us to serve a high volume of concurrent users.
+2. The most critical optimization is implementing a **caching layer** with an in-memory datastore like **Redis**. Since offer data doesn't change every second, querying the database for every request is highly inefficient. With a cache, i first check if the requested offer data for a specific bank and payment instrument exists in Redis. If i don’t found the request offer data in Redis, then i query the database and fetch the result, i store that result in Redis for future use case. 
+3. Finally, the database itself must be robust. The **MongoDB replica set** needs to be properly scaled to handle concurrent connections from all application instances, especially during cache misses and write operations from other endpoints. Continuous performance monitoring across the entire system is essential. I would track response times, CPU usage, and database query performance to proactively identify and resolve bottlenecks, ensuring the entire application remains fast and reliable under heavy load.
 
 ## Short Note on improvement of the assignment, if time persists
 
-A crucial improvement would be building a **comprehensive testing suite** to guarantee code quality. This involves writing **unit tests** to verify isolated logic. I would also add **integration tests** to confirm that the API endpoints properly communicate with the MongoDB database. Finally, **end-to-end tests** would simulate a full user journey, ensuring the entire system works together seamlessly and that future code changes don't introduce regressions.
+A crucial improvement would be building a **comprehensive testing suite** to guarantee code quality. This involves writing **unit tests** to verify isolated logic, like ensuring the `discountCalculator` function handles all edge cases correctly. I would also add **integration tests** to confirm that the API endpoints properly communicate with the MongoDB database. Finally, **end-to-end tests** would simulate a full user journey, ensuring the entire system works together seamlessly and that future code changes don't introduce regressions.
 
 I would establish a professional development workflow with a **CI/CD (Continuous Integration/Continuous Deployment) pipeline**. Using tools like Jenkins, this would automatically run your tests and deploy the application when code is pushed and job is triggered. Alongside this, i would implement **structured logging** with a library. Instead of a custom logger file, this creates rich JSON logs that are far easier to search and analyze in a production environment, making debugging significantly faster and more efficient.
-
-
 
 
