@@ -74,5 +74,30 @@ To complete the setup and run the application, follow these steps carefully:
     curl --location 'http://localhost:3000/api/v1/highest-discount?amountToPay=50000&paymentInstrument=CREDIT&bankName=FLIPKARTAXISBANK'
     ```
 
+## Design Decisions
+
+1. Express.js framework 
+
+I decided to go with Express because Express.js is a great choice because it's incredibly simple and flexible. It's a **minimal** framework, giving you only the essential tools to build a web application and then getting out of your way. Because it's **unopinionated**, it doesn't force you to organize your code in any specific way, giving you complete freedom. This makes it very easy to learn and perfect for building small applications, simple APIs, or quick prototypes where you want to get started immediately without a lot of setup.
+
+1. MongoDB 
+
+I chose MongoDB because it works perfectly with the JSON Horoscope data. As a NoSQL document database, MongoDB stores data in a format that's nearly identical to the JSON payload that I store for Horoscope data. This direct mapping simplifies our code, as i don't need to translate the data into the rigid tables required by a traditional SQL database. This flexibility is a major advantage, we can easily adapt and store them without performing complex database migrations.
+
+1. Typescript 
+
+TypeScript was chosen for this horoscope API project to build a more robust, maintainable, and error-free backend. Its primary benefit, **static typing**, is crucial for managing the specific data structures involved.
+
+For instance, by defining an `IUser` interface, we guarantee that every user object consistently has properties like `name: string`, `birthdate: Date`, and `zodiacSign: string`. This prevents common runtime errors that could occur if a property were misspelled or had the wrong data type, especially within the authentication middleware where `req.user` is used.
+
+This use of types also makes the code **self-documenting** and easier to work with. Any developer can look at the `IUser` and immediately understand the exact shape of an offer object, which improves collaboration and long-term maintainability. 
+
+## Short Note on improvement of the assignment, if time persists
+
+A crucial improvement would be building a **comprehensive testing suite** to guarantee code quality. This involves writing **unit tests** to verify isolated logic. I would also add **integration tests** to confirm that the API endpoints properly communicate with the MongoDB database. Finally, **end-to-end tests** would simulate a full user journey, ensuring the entire system works together seamlessly and that future code changes don't introduce regressions.
+
+I would establish a professional development workflow with a **CI/CD (Continuous Integration/Continuous Deployment) pipeline**. Using tools like Jenkins, this would automatically run your tests and deploy the application when code is pushed and job is triggered. Alongside this, i would implement **structured logging** with a library. Instead of a custom logger file, this creates rich JSON logs that are far easier to search and analyze in a production environment, making debugging significantly faster and more efficient.
+
+
 
 
